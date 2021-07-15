@@ -30,7 +30,7 @@ namespace ngcomp
   VTKOutput<D>::VTKOutput(shared_ptr<MeshAccess> ama,
                           const Array<shared_ptr<CoefficientFunction>> &a_coefs,
                           const Array<string> &a_field_names,
-                          string a_filename, int a_subdivision, int a_only_element, 
+                          string a_filename, int a_subdivision, int a_only_element,
                           string a_floatsize, bool a_legacy)
       : ma(ama), coefs(a_coefs), fieldnames(a_field_names),
         filename(a_filename), subdivision(a_subdivision), only_element(a_only_element), floatsize(a_floatsize), legacy(a_legacy)
@@ -658,7 +658,7 @@ namespace ngcomp
     ostringstream filenamefinal;
     stringstream contents;
     std::string fnamepart;
-    fnamepart = fname.substr(str.find_last_of("/\\")+1);
+    fnamepart = fname.substr(fname.find_last_of("/\\") + 1);
     filenamefinal << fname << ".pvd";
 
     contents
@@ -667,25 +667,25 @@ namespace ngcomp
     contents << "<Collection>" << endl;
     auto comm = ma->GetCommunicator();
     for (int l = comm.Size() == 1 ? 0 : 1; l < comm.Size(); l++)
-    { 
+    {
       contents << "<DataSet timestep=\"" << times[0] << "\"";
       if (comm.Size() > 1)
         contents << " part=\"" << l << "\"";
       contents << " file=\"" << fnamepart;
       if (comm.Size() > 1)
-        contents << "_proc" << l; 
+        contents << "_proc" << l;
       contents << ".vtu\"/>" << endl;
       for (int k = 1; k < index; k++)
-      { 
+      {
         contents << "<DataSet timestep=\"" << times[k] << "\"";
         if (comm.Size() > 1)
           contents << " part=\"" << l << "\"";
         contents << " file=\"" << fnamepart;
         if (comm.Size() > 1)
-          contents << "_proc" << l; 
+          contents << "_proc" << l;
         contents << "_step" << setw(5) << setfill('0') << k << ".vtu\"/>" << endl;
-      } 
-    } 
+      }
+    }
     contents << "</Collection>" << endl;
     contents << "</VTKFile>";
 
@@ -715,8 +715,7 @@ namespace ngcomp
     else
       filenamefinal << ".vtk";
 
-
-    if ((comm.Size() == 1) || (comm.Rank() > 0) )
+    if ((comm.Size() == 1) || (comm.Rank() > 0))
       cout << IM(4) << " Writing VTK-Output (" << lastoutputname << ")";
     if (output_cnt > 0)
     {
@@ -738,18 +737,17 @@ namespace ngcomp
     output_cnt++;
 
     if (!legacy)
-    { 
-      if ((comm.Size()==1 && output_cnt > 1) || (comm.Size() > 1 && comm.Rank()==0))
+    {
+      if ((comm.Size() == 1 && output_cnt > 1) || (comm.Size() > 1 && comm.Rank() == 0))
         PvdFile(filename, output_cnt);
-    } 
+    }
 
-    if ((comm.Size() == 1) || (comm.Rank() > 0) )
+    if ((comm.Size() == 1) || (comm.Rank() > 0))
       cout << IM(4) << ":" << flush;
     else
       return;
 
     fileout = make_shared<ofstream>(filenamefinal.str());
-
 
     ResetArrays();
 
